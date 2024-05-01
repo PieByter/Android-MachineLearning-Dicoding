@@ -8,9 +8,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.dicoding.asclepius.R
 import com.dicoding.asclepius.database.HistoryDatabase
-import com.dicoding.asclepius.entity.HistoryResult
 import com.dicoding.asclepius.databinding.ActivityResultBinding
-import com.dicoding.asclepius.view.MainActivity.Companion.PREDICTED_CLASS_LABEL
+import com.dicoding.asclepius.entity.HistoryResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

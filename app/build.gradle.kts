@@ -49,8 +49,8 @@ dependencies {
     implementation("androidx.databinding:databinding-runtime:8.4.0")
     ksp("androidx.room:room-compiler:2.6.1")
 
-    val cameraxVersion = "1.3.2"
-    implementation("androidx.camera:camera-camera2:$cameraxVersion")
+    val cameraxVersion = "1.3.3"
+    implementation("androidx.camera:camera-camera2:1.3.3")
     implementation("androidx.camera:camera-lifecycle:$cameraxVersion")
     implementation("androidx.camera:camera-view:$cameraxVersion")
 
@@ -76,7 +76,7 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
 
-    implementation("androidx.core:core-ktx:1.12.0")
+    implementation("androidx.core:core-ktx:1.13.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.11.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")

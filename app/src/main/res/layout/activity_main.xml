@@ -22,7 +22,6 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <com.google.android.material.progressindicator.LinearProgressIndicator
-        android:id="@+id/progressIndicator"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:indeterminate="true"

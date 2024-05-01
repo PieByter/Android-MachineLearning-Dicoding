@@ -39,7 +39,8 @@ class HistoryResultAdapter(private val onDeleteClickListener: (HistoryResult) ->
         }
     }
 
-    inner class ViewHolder(private val binding: ItemHistoryBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(private val binding: ItemHistoryBinding) :
+        RecyclerView.ViewHolder(binding.root) {
 
         fun bind(historyResult: HistoryResult) {
             binding.historyResultText.text = historyResult.resultText

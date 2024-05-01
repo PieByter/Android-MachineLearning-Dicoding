@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.dicoding.asclepius
 
 import androidx.test.platform.app.InstrumentationRegistry
