@@ -1,22 +1,19 @@
 package com.dicoding.asclepius.view
 
-import com.dicoding.asclepius.helper.ImageClassifierHelper
-import android.Manifest
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import com.dicoding.asclepius.R
 import com.dicoding.asclepius.databinding.ActivityMainBinding
+import com.dicoding.asclepius.helper.ImageClassifierHelper
+import com.dicoding.asclepius.helper.getImageUri
 import com.yalantis.ucrop.UCrop
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
@@ -64,7 +61,11 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.galleryButton.setOnClickListener {
-            checkPermissionAndStartGallery()
+            startGallery()
+        }
+
+        binding.cameraButton.setOnClickListener {
+            startCamera()
         }
         binding.analyzeButton.setOnClickListener {
             currentImageUri?.let { uri ->
@@ -72,16 +73,6 @@ class MainActivity : AppCompatActivity() {
             } ?: showToast(getString(R.string.no_image_selected))
         }
     }
-
-    private val requestPermissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
-            if (isGranted) {
-                showToast("Permission request granted")
-                startGallery()
-            } else {
-                showToast("Permission denied to read your External storage")
-            }
-        }
 
     private fun showImage() {
         currentImageUri?.let { uri ->
@@ -100,20 +91,23 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun checkPermissionAndStartGallery() {
-        if (ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.READ_EXTERNAL_STORAGE
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
-        } else {
-            startGallery()
-        }
-    }
-
     private fun startGallery() {
         launcherGallery.launch("image/*")
+    }
+
+    private fun startCamera() {
+        currentImageUri = getImageUri(this)
+        launcherIntentCamera.launch(currentImageUri)
+    }
+
+    private val launcherIntentCamera = registerForActivityResult(
+        ActivityResultContracts.TakePicture()
+    ) { isSuccess ->
+        if (isSuccess) {
+            currentImageUri?.let { uri ->
+                startUCrop(uri)
+            }
+        }
     }
 
     private val launcherGallery = registerForActivityResult(
@@ -123,7 +117,7 @@ class MainActivity : AppCompatActivity() {
             currentImageUri = uri
             startUCrop(uri)
         } else {
-            Log.d("Photo Picker", "No media selected")
+            Toast.makeText(this, "No media selected", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -158,10 +152,8 @@ class MainActivity : AppCompatActivity() {
         } else if (resultCode == UCrop.RESULT_ERROR) {
             val cropError = UCrop.getError(data!!)
             cropError?.let {
-                Log.e("UCrop", "Crop error: ${it.localizedMessage}")
                 showToast("Crop error: ${it.localizedMessage}")
             } ?: run {
-                Log.e("UCrop", "Unknown crop error")
                 showToast("Unknown crop error")
             }
         }
@@ -188,7 +180,7 @@ class MainActivity : AppCompatActivity() {
 
                             override fun onResults(
                                 results: List<Classifications>?,
-                                inferenceTime: Long
+                                inferenceTime: Long,
                             ) {
                                 results?.let {
                                     GlobalScope.launch(Dispatchers.Main) {
@@ -215,11 +207,12 @@ class MainActivity : AppCompatActivity() {
     private fun moveToResult(results: List<Classifications>) {
         if (results.isNotEmpty()) {
             val latestResult = results.last()
-            val predictedClassLabel = if (latestResult.categories.isNotEmpty() && latestResult.categories[0].label != null) {
-                latestResult.categories[0].label
-            } else {
-                "Unknown"
-            }
+            val predictedClassLabel =
+                if (latestResult.categories.isNotEmpty() && latestResult.categories[0].label != null) {
+                    latestResult.categories[0].label
+                } else {
+                    "Unknown"
+                }
             val confidenceScore = latestResult.categories[0].score
 
             val intent = Intent(this, ResultActivity::class.java)

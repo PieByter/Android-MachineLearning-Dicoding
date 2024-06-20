@@ -19,5 +19,6 @@
 
     <string name="delete_result">Delete Result</string>
     <string name="no_history_available">No History Available</string>
+    <string name="camera">Camera</string>
 
 </resources>

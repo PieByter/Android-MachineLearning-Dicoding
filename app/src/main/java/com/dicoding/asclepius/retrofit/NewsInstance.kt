@@ -1,11 +1,12 @@
 package com.dicoding.asclepius.retrofit
 
+import com.dicoding.asclepius.BuildConfig
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object NewsInstance {
 
-    private const val BASE_URL = "https://newsapi.org/v2/"
+    private const val BASE_URL = BuildConfig.BASE_URL
 
     val newsService: ApiService by lazy {
         Retrofit.Builder()
